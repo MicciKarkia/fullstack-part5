@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react'
-import Blog from './components/Blog'
+//import Blog from './components/Blog'
+//import Notification from './components/Notification'
+import Login from './components/Login'
+import Blogs from './components/Blogs'
 import blogService from './services/blogs'
 import loginService from './services/login'
 
@@ -16,6 +19,16 @@ const App = () => {
     )  
   }, [])
 
+  useEffect(() => {
+    const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
+    if (loggedUserJSON) {
+      const user = JSON.parse(loggedUserJSON)
+      setUser(user)
+
+      blogService.setToken(user.token)
+    }
+  }, [])
+
   const handleLogin = async (event) => {
     event.preventDefault()
     console.log('logging in with ', username, password)
@@ -24,62 +37,56 @@ const App = () => {
       const user = await loginService.login({
         username, password,
       })
+
+      window.localStorage.setItem(
+        'loggedBlogappUser', JSON.stringify(user)
+      )
+      blogService.setToken(user.token)
       setUser(user)
       setUsername('')
       setPassword('')
-      setBlogs(blogs.filter( blog => blog.user.username === user.username))
-      console.log(user,blogs)
     } catch (exception) {
       setErrorMessage('wrong credentials')
       setTimeout(() => {
         setErrorMessage(null)
+        setUsername('')
+        setPassword('')
       }, 5000)
     }
   }
 
-  const loginForm = () => (
-    <div>
-        <h2>log in to application</h2>
-        <form onSubmit={handleLogin}>
-        <div>
-          username
-            <input
-            type="text"
-            value={username}
-            name="Username"
-            onChange={({ target }) => setUsername(target.value)}
-          />
-        </div>
-        <div>
-          password
-            <input
-            type="password"
-            value={password}
-            name="Password"
-            onChange={({ target }) => setPassword(target.value)}
-          />
-        </div>
-        <button type="submit">login</button>
-      </form>
-      <p>{errorMessage}</p>
-      </div>
-  )
+  const handleUsernameChange = (event) => {
+    setUsername(event.target.value)
+  }
 
-  const blogsList = () => (
-    <div>
-      <h2>blogs</h2>
-      <p>{user.name} logged in</p>
-      {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
-      )}
-    </div>
-  )
+  const handlePasswordChange = (event) => {
+    setPassword(event.target.value)
+  }
   
+  const handleLogout = (event) => {
+    event.preventDefault()
+
+    setUser(null)
+    window.localStorage.clear()
+
+
+  }
   return (
     <>
     {user === null ?
-      loginForm() :
-      blogsList()
+      <Login 
+        handleLogin={handleLogin}
+        username={username}
+        password={password}
+        errorMessage={errorMessage}
+        handleUsernameChange={handleUsernameChange}
+        handlePasswordChange={handlePasswordChange}
+      /> :
+      <Blogs 
+        blogs={blogs} 
+        user={user}
+        handleLogout={handleLogout} 
+      />
     }
     </>
   )
