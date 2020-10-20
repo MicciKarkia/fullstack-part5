@@ -8,6 +8,7 @@ import loginService from './services/login'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
+  const [newBlog, setNewBlog] = useState({ title: '', author: '', url: '' })
   const [errorMessage, setErrorMessage] = useState(null)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
@@ -68,9 +69,23 @@ const App = () => {
 
     setUser(null)
     window.localStorage.clear()
-
-
   }
+
+  const handleInputChange = (event) => {
+    event.preventDefault()
+    setNewBlog({ ...newBlog, [event.target.name]: event.target.value})
+  }
+
+  const saveBlog = (event) => {
+    event.preventDefault()
+
+    blogService.create(newBlog)
+    .then(returnedBlog => {
+      setBlogs(blogs.concat(returnedBlog))
+      setNewBlog({ title: '', author: '', url: '' })
+    })
+  }
+
   return (
     <>
     {user === null ?
@@ -86,6 +101,8 @@ const App = () => {
         blogs={blogs} 
         user={user}
         handleLogout={handleLogout} 
+        handleInputChange={handleInputChange}
+        saveBlog={saveBlog}
       />
     }
     </>
