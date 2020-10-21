@@ -1,18 +1,21 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 //import Blog from './components/Blog'
 //import Notification from './components/Notification'
 import Login from './components/Login'
 import Blogs from './components/Blogs'
+import BlogForm from './components/BlogForm'
+import Togglable from './components/Togglable'
 import blogService from './services/blogs'
 import loginService from './services/login'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
-  const [newBlog, setNewBlog] = useState({ title: '', author: '', url: '' })
   const [notificationMessage, setNotificationMessage] = useState(null)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
+
+  const blogFormRef =useRef()
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -71,21 +74,14 @@ const App = () => {
     window.localStorage.clear()
   }
 
-  const handleInputChange = (event) => {
-    event.preventDefault()
-    setNewBlog({ ...newBlog, [event.target.name]: event.target.value})
-    console.log(newBlog)
-  }
+  
 
-  const saveBlog = (event) => {
-    event.preventDefault()
-
-    console.log('blog to save:', newBlog)
-    
+  const saveBlog = (newBlog) => {
+    console.log('saving blog:', newBlog)
+    blogFormRef.current.toggleVisibility()
     blogService.create(newBlog)
     .then(returnedBlog => {
       setBlogs(blogs.concat(returnedBlog))
-      setNewBlog({ title: '', author: '', url: '' })
       setNotificationMessage({ type: 'success', text: `a new blog ${returnedBlog.title} by ${returnedBlog.author} added`})
       setTimeout(() => {
         setNotificationMessage(null)
@@ -98,13 +94,14 @@ const App = () => {
         setNotificationMessage(null)
       }, 5000)
     }) 
-      
-      
-      
-    
-
-    
   }
+  
+  const blogForm = () => (
+    <Togglable buttonLabel="add new blog" ref={blogFormRef}>
+      <BlogForm saveBlog={saveBlog} />
+    </Togglable>
+  )
+      
 
   return (
     <>
@@ -121,10 +118,9 @@ const App = () => {
         blogs={blogs} 
         user={user}
         handleLogout={handleLogout} 
-        newBlog={newBlog}
-        handleInputChange={handleInputChange}
         saveBlog={saveBlog}
         notificationMessage={notificationMessage}
+        blogForm={blogForm}
       />
     }
     </>
