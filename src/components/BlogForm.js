@@ -4,12 +4,9 @@ const BlogForm = ({ saveBlog }) => {
     const [newBlog, setNewBlog] = useState({ title: '', author: '', url: '' })
 
     const handleInputChange = (event) => {
-        event.preventDefault()
         console.log(event.target.value)
         setNewBlog({ ...newBlog, [event.target.name]: event.target.value})
     }
-
-    console.log(newBlog)
 
     const addBlog = async (event) => {
         event.preventDefault()

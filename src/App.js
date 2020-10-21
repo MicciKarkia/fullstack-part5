@@ -51,10 +51,10 @@ const App = () => {
       setPassword('')
     } catch (exception) {
       setNotificationMessage({ type: 'error', text: 'wrong username or password'})
+      setUsername('')
+      setPassword('')
       setTimeout(() => {
         setNotificationMessage(null)
-        setUsername('')
-        setPassword('')
       }, 5000)
     }
   }
@@ -78,9 +78,9 @@ const App = () => {
 
   const saveBlog = (newBlog) => {
     console.log('saving blog:', newBlog)
-    blogFormRef.current.toggleVisibility()
     blogService.create(newBlog)
     .then(returnedBlog => {
+      blogFormRef.current.toggleVisibility()
       setBlogs(blogs.concat(returnedBlog))
       setNotificationMessage({ type: 'success', text: `a new blog ${returnedBlog.title} by ${returnedBlog.author} added`})
       setTimeout(() => {
