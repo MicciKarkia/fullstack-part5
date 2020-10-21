@@ -1,11 +1,12 @@
 import React from 'react'
 import Notification from './Notification'
 
-const Login = ({ handleLogin, username, password, errorMessage, handleUsernameChange, handlePasswordChange}) => {
+const Login = ({ handleLogin, username, password, notificationMessage, handleUsernameChange, handlePasswordChange}) => {
     
     return(
       <div>
         <h2>log in to application</h2>
+        <Notification message={notificationMessage} />
         <form onSubmit={handleLogin}>
         <div>
             username
@@ -27,7 +28,6 @@ const Login = ({ handleLogin, username, password, errorMessage, handleUsernameCh
             </div>
             <button type="submit">login</button>
         </form>
-        <Notification message={errorMessage} />
     </div>
     )
     

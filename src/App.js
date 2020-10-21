@@ -9,7 +9,7 @@ import loginService from './services/login'
 const App = () => {
   const [blogs, setBlogs] = useState([])
   const [newBlog, setNewBlog] = useState({ title: '', author: '', url: '' })
-  const [errorMessage, setErrorMessage] = useState(null)
+  const [notificationMessage, setNotificationMessage] = useState(null)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
@@ -47,9 +47,9 @@ const App = () => {
       setUsername('')
       setPassword('')
     } catch (exception) {
-      setErrorMessage('wrong credentials')
+      setNotificationMessage({ type: 'error', text: 'wrong username or password'})
       setTimeout(() => {
-        setErrorMessage(null)
+        setNotificationMessage(null)
         setUsername('')
         setPassword('')
       }, 5000)
@@ -74,16 +74,36 @@ const App = () => {
   const handleInputChange = (event) => {
     event.preventDefault()
     setNewBlog({ ...newBlog, [event.target.name]: event.target.value})
+    console.log(newBlog)
   }
 
   const saveBlog = (event) => {
     event.preventDefault()
 
+    console.log('blog to save:', newBlog)
+    
     blogService.create(newBlog)
     .then(returnedBlog => {
       setBlogs(blogs.concat(returnedBlog))
       setNewBlog({ title: '', author: '', url: '' })
-    })
+      setNotificationMessage({ type: 'success', text: `a new blog ${returnedBlog.title} by ${returnedBlog.author} added`})
+      setTimeout(() => {
+        setNotificationMessage(null)
+      }, 5000)
+    })  
+    .catch (error => {
+      console.log(error)
+      setNotificationMessage({ type: 'error', text: 'The blog was not saved. Try again, all fields are required!'})
+      setTimeout(() => {
+        setNotificationMessage(null)
+      }, 5000)
+    }) 
+      
+      
+      
+    
+
+    
   }
 
   return (
@@ -93,7 +113,7 @@ const App = () => {
         handleLogin={handleLogin}
         username={username}
         password={password}
-        errorMessage={errorMessage}
+        notificationMessage={notificationMessage}
         handleUsernameChange={handleUsernameChange}
         handlePasswordChange={handlePasswordChange}
       /> :
@@ -101,8 +121,10 @@ const App = () => {
         blogs={blogs} 
         user={user}
         handleLogout={handleLogout} 
+        newBlog={newBlog}
         handleInputChange={handleInputChange}
         saveBlog={saveBlog}
+        notificationMessage={notificationMessage}
       />
     }
     </>
