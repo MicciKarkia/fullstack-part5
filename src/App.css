@@ -20,7 +20,29 @@
   border-radius: 5px;
   font: bold 1,5em;
   color: green;
+}
+
+.blog {
+  display: flex;
+  margin-bottom: 5px;
+  padding-top: 5px;
+  padding-left: 2px;
+  border: 1px solid black
+}
+
+.blogButtonContainer {
+  display: flex;
+}
+.blogButton {
+  height: 20px;
+  margin-left: 5px;
+  margin-right: 5px;
+  margin-bottom: 5px;
   
+}
+
+.addBlogButton {
+  margin: 5px 0px;
 }
 
 

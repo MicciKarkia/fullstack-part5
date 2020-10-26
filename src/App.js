@@ -1,6 +1,4 @@
 import React, { useState, useEffect, useRef } from 'react'
-//import Blog from './components/Blog'
-//import Notification from './components/Notification'
 import Login from './components/Login'
 import Blogs from './components/Blogs'
 import BlogForm from './components/BlogForm'
@@ -97,11 +95,14 @@ const App = () => {
   }
   
   const blogForm = () => (
-    <Togglable buttonLabel="add new blog" ref={blogFormRef}>
+    <Togglable buttonLabelHidden="add new blog" buttonLabelVisible="cancel" button="addBlogButton" ref={blogFormRef}>
       <BlogForm saveBlog={saveBlog} />
     </Togglable>
   )
-      
+
+  const handleAddLike = (blog) => {
+    console.log('like-button clicked', blog)
+  }
 
   return (
     <>
@@ -121,6 +122,7 @@ const App = () => {
         saveBlog={saveBlog}
         notificationMessage={notificationMessage}
         blogForm={blogForm}
+        handleAddLike={handleAddLike}
       />
     }
     </>

@@ -1,5 +1,5 @@
 import React from 'react'
-import Blog from './Blog'
+import BlogList from './Bloglist'
 import Notification from './Notification'
 
 
@@ -8,7 +8,8 @@ const Blogs = ({
   user, 
   handleLogout, 
   notificationMessage,
-  blogForm
+  blogForm,
+  handleAddLike
  }) => {
 
   
@@ -19,9 +20,7 @@ const Blogs = ({
       <Notification message={notificationMessage} />
       <p>{user.name} logged in <button onClick={handleLogout}>logout</button></p>
       {blogForm()}
-      {blogs.filter(blog => blog.user.username === user.username).map(blog =>
-        <Blog key={blog.id} blog={blog} />
-      )}
+      <BlogList user={user} blogs={blogs} handleAddLike={handleAddLike} />
     </div>
   )
 }
