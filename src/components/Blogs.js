@@ -4,15 +4,25 @@ import Notification from './Notification'
 
 
 const Blogs = ({ 
-  blogs, 
+  initialBlogs, 
   user, 
   handleLogout, 
   notificationMessage,
   blogForm,
-  handleAddLike
+  blogList,
+  updateLikes,
+  deleteBlog
  }) => {
 
   
+
+  /*const userBlogs = initialBlogs.filter(blog => {
+    return blog.user.username === user.username
+  }).sort((a,b) => b.likes - a.likes)*/
+
+  const blogs = initialBlogs.sort((a,b) => b.likes - a.likes)
+
+  console.log(blogs)
 
   return (
     <div>
@@ -20,7 +30,7 @@ const Blogs = ({
       <Notification message={notificationMessage} />
       <p>{user.name} logged in <button onClick={handleLogout}>logout</button></p>
       {blogForm()}
-      <BlogList user={user} blogs={blogs} handleAddLike={handleAddLike} />
+      <BlogList blogs={blogs} user={user} blogList={blogList} updateLikes={updateLikes} deleteBlog={deleteBlog} />
     </div>
   )
 }

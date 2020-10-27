@@ -45,4 +45,12 @@
   margin: 5px 0px;
 }
 
+.remove {
+  background-color: #5c82fd;
+  border: none;
+  border-radius: 4px;
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
 

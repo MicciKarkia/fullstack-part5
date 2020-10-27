@@ -16,8 +16,8 @@ const App = () => {
   const blogFormRef =useRef()
 
   useEffect(() => {
-    blogService.getAll().then(blogs =>
-      setBlogs(blogs)
+    blogService.getAll().then(initialBlogs =>
+      setBlogs(initialBlogs)
     )  
   }, [])
 
@@ -26,10 +26,10 @@ const App = () => {
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
       setUser(user)
-
       blogService.setToken(user.token)
     }
   }, [])
+
 
   const handleLogin = async (event) => {
     event.preventDefault()
@@ -100,10 +100,41 @@ const App = () => {
     </Togglable>
   )
 
-  const handleAddLike = (blog) => {
-    console.log('like-button clicked', blog)
+  const updateLikes = (changedBlog) => {
+      blogService
+        .update(changedBlog.id, {
+          user: changedBlog.user.id,
+          likes: changedBlog.likes,
+          author: changedBlog.author,
+          title: changedBlog.title,
+          url: changedBlog.url
+        })
+        .then(returnedBlog => {
+          setBlogs(blogs.map(blog => blog.id !== returnedBlog.id ? blog : changedBlog)
+          )
+      })  
+      .catch(error => {
+        console.log(error)
+      }) 
   }
 
+  const deleteBlog = (blogToDelete) => {
+    blogService
+      .remove(blogToDelete.id)
+      .then(response => {
+        console.log(response)
+        setBlogs(blogs.filter(blog => blog.id !== blogToDelete.id))
+        setNotificationMessage({ type: 'success', text: `${blogToDelete.title} was deleted`})
+        setTimeout(() => {
+        setNotificationMessage(null)
+      }, 5000)
+      })
+      .catch(error => {
+        console.log(error)
+      })
+  }
+
+  
   return (
     <>
     {user === null ?
@@ -116,13 +147,14 @@ const App = () => {
         handlePasswordChange={handlePasswordChange}
       /> :
       <Blogs 
-        blogs={blogs} 
+        initialBlogs={blogs} 
         user={user}
         handleLogout={handleLogout} 
         saveBlog={saveBlog}
         notificationMessage={notificationMessage}
         blogForm={blogForm}
-        handleAddLike={handleAddLike}
+        updateLikes={updateLikes}
+        deleteBlog={deleteBlog}
       />
     }
     </>
